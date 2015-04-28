@@ -58,21 +58,40 @@ class bone_convert_lr_jp_to_en(bpy.types.Operator) :
         convert_lr_jp_to_en(self, context)
         return { 'FINISHED' }
 
+text_dir = {
+    "en_EN" : { 
+        ( "*", "conv_lr_enjp" ) : "Convert _L_R at bone names (En->Jp)",
+        ( "*", "conv_lr_jpen" ) : "Convert _L_R at bone names (Jp->En)"
+    },
+    "ja_JP" : {
+        ( "*", "conv_lr_enjp" ) : "ボーン名の「_L_R」を「左右」に変換",
+        ( "*", "conv_lr_jpen" ) : "ボーン名の「左右」を「_L_R」に変換"
+    }
+}
+
+def get_menu_text(name) :
+    if bpy.context.user_preferences.system.use_international_fonts :
+        return bpy.app.translations.pgettext( name )
+
+    return text_dir["en_EN"][( "*", name )]
+
 def invoke_convert_lr_en_to_jp(self, context) :
-    self.layout.operator( bone_convert_lr_en_to_jp.bl_idname, text="Convert _L_R at bone names (En->Jp)" )
+    self.layout.operator( bone_convert_lr_en_to_jp.bl_idname, text=get_menu_text( "conv_lr_enjp" ) )
 
 def invoke_convert_lr_jp_to_en(self, context) :
-    self.layout.operator( bone_convert_lr_jp_to_en.bl_idname, text="Convert _L_R at bone names (Jp->En)" )
+    self.layout.operator( bone_convert_lr_jp_to_en.bl_idname, text=get_menu_text( "conv_lr_jpen" ) )
 
 def register() :
     bpy.utils.register_class( bone_convert_lr_en_to_jp )
     bpy.utils.register_class( bone_convert_lr_jp_to_en )
+    bpy.app.translations.register( __name__, text_dir )
     bpy.types.VIEW3D_MT_object_apply.append( invoke_convert_lr_en_to_jp )
     bpy.types.VIEW3D_MT_object_apply.append( invoke_convert_lr_jp_to_en )
 
 def unregister() :
     bpy.utils.unregister_class( bone_convert_lr_en_to_jp )
     bpy.utils.unregister_class( bone_convert_lr_jp_to_en )
+    bpy.app.translations.unregister( __name__ )
     bpy.types.VIEW3D_MT_object_apply.remove( invoke_convert_lr_en_to_jp )
     bpy.types.VIEW3D_MT_object_apply.remove( invoke_convert_lr_jp_to_en )
 
