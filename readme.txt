@@ -11,5 +11,8 @@ En->Jpでボーン名のxxx_L、xxx_Rを左xxx、右xxxにします。Jp->Enは�
 オブジェクトモードのオブジェクトメニュー(Object)->適用(Apply)の中にConvert _L_R at bone name(En->Jp)および(Jp->En)を作ります。
 日本語に対応しています。
 
+・nclr_io_mesh_uv_layout_exporter
+選択したオブジェクト全てのUVレイアウトを出力します。
+
 LNSEAB
-2015/04/28
+2015/06/03
