@@ -1,4 +1,4 @@
-# coding = utf-8
+# coding : utf-8
 
 bl_info = {
     "name" : "Nclr UV Layout",
@@ -13,6 +13,12 @@ bl_info = {
 }
 
 import bpy
+
+text_dir = {
+    "ja_JP" : {
+        ( "*", "Export UV Layout of Selected Objects" ) : "選択したオブジェクトのUVレイアウトをエクスポート"
+    }
+}
 
 class nclr_export_uv_layout(bpy.types.Operator) :
     """Export UV Layout of Selected Objects"""
@@ -68,14 +74,16 @@ class nclr_export_uv_layout(bpy.types.Operator) :
         return { 'RUNNING_MODAL' }
 
 def menu_func(self, context) :
-    self.layout.operator( nclr_export_uv_layout.bl_idname )
+    self.layout.operator( nclr_export_uv_layout.bl_idname, text=bpy.app.translations.pgettext( "Export UV Layout of Selected Objects" ) )
 
 def register() :
     bpy.utils.register_module( __name__ )
+    bpy.app.translations.register( __name__, text_dir )
     bpy.types.IMAGE_MT_uvs.append( menu_func )
 
 def unregister() :
     bpy.utils.unregister_module( __name__ )
+    bpy.app.translations.unregister( __name__ )
     bpy.types.IMAGE_MT_uvs.remove( menu_func )
 
 if __name__ == "__main__" :
