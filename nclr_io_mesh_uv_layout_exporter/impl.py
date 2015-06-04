@@ -104,8 +104,6 @@ def append_faces(src_mesh, mesh, mtrl_offset) :
     for i in range( len( materials ) ) :
         mesh.polygons[poly_len + i].material_index = materials[i]
 
-    mesh.update( calc_edges = True )
-
 def remove_doubles(mesh) :
     bm = bmesh.new()
     bm.from_mesh( mesh )
@@ -157,6 +155,7 @@ def export(**param) :
         solid_mtrls.append( make_materials( scene, obj.data, mesh, param["opacity"] ) )
         append_faces( obj.data, mesh, mtrl_offset )
         mtrl_offset += len( obj.data.materials )
+    mesh.update( calc_edges = True )
 
     wire_mtrl, wire_mtrl_obj = make_wire_material( scene, mesh )
 
