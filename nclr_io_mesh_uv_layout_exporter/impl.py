@@ -2,6 +2,9 @@
 
 import bpy
 import bmesh
+import io
+import sys
+import platform
 
 def make_camera(scene) :
     cam = bpy.data.cameras.new( "uv_tmp" )
@@ -53,7 +56,12 @@ def make_materials(scene, mesh, dst_mesh, opacity) :
     return solids
 
 def make_uv_mtrl_idx(mesh) :
+    uv_layer = None
+    if mesh.uv_layers == None or mesh.uv_layers.active == None or mesh.uv_layers.active.data == None :
+        raise RuntimeError( mesh.name + " : UV Data None" )
+
     uv_layer = mesh.uv_layers.active.data
+
     polys = mesh.polygons
 
     uv_mtrl_idx = []
@@ -133,6 +141,12 @@ def render(filepath, size, scene, mesh) :
     bpy.ops.render.render( data_context, write_still = True )
 
 def export(**param) :
+    old_sysout = None
+
+    if platform.system() == "Windows" :
+        old_sysout = sys.stdout
+        sys.stdout = io.TextIOWrapper( sys.stdout.buffer, encoding = "cp932" )
+
     objs = bpy.context.selected_objects
 
     editing_obj = None
@@ -152,9 +166,13 @@ def export(**param) :
     mtrl_offset = 0
 
     for obj in objs :
-        solid_mtrls.append( make_materials( scene, obj.data, mesh, param["opacity"] ) )
-        append_faces( obj.data, mesh, mtrl_offset )
-        mtrl_offset += len( obj.data.materials )
+        try :
+            solid_mtrls.append( make_materials( scene, obj.data, mesh, param["opacity"] ) )
+            append_faces( obj.data, mesh, mtrl_offset )
+            mtrl_offset += len( obj.data.materials )
+        except RuntimeError as e :
+            print( e )
+
     mesh.update( calc_edges = True )
 
     wire_mtrl, wire_mtrl_obj = make_wire_material( scene, mesh )
@@ -181,5 +199,8 @@ def export(**param) :
 
     if editing_obj != None :
         bpy.ops.object.mode_set( mode="EDIT", toggle=False )
+
+    if old_sysout != None :
+        sys.stdout = old_sysout
 
     return { 'FINISHED' }
