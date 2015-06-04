@@ -5,7 +5,7 @@ bl_info = {
     "author" : "LNSEAB",
     "version" : ( 1, 0 ),
     "blender" : ( 2, 74, 0 ),
-    "location" : "Image-Window > UVs > Nclr Export UV Layout",
+    "location" : "Image-Window > UVs > Export UV Layout",
     "description" : "",
     "warning" : "",
     "wiki_url" : "",
@@ -73,8 +73,13 @@ class nclr_export_uv_layout(bpy.types.Operator) :
         context.window_manager.fileselect_add( self )
         return { 'RUNNING_MODAL' }
 
+def menu_name(name) :
+    if bpy.context.user_preferences.system.use_international_fonts :
+        return bpy.app.translations.pgettext( name )
+    return name
+
 def menu_func(self, context) :
-    self.layout.operator( nclr_export_uv_layout.bl_idname, text=bpy.app.translations.pgettext( "Export UV Layout of Selected Objects" ) )
+    self.layout.operator( nclr_export_uv_layout.bl_idname, text=menu_name( "Export UV Layout of Selected Objects" ) )
 
 def register() :
     bpy.utils.register_module( __name__ )

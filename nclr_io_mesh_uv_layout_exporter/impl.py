@@ -1,4 +1,7 @@
+# coding : utf-8
+
 import bpy
+import bmesh
 
 def make_camera(scene) :
     cam = bpy.data.cameras.new( "uv_tmp" )
@@ -86,8 +89,8 @@ def append_faces(src_mesh, mesh, mtrl_offset) :
         materials.append( mtrl_offset + idx )
         v_index += num_vtx
 
-    mesh.vertices.add( v_index )
-    mesh.loops.add( v_index )
+    mesh.vertices.add( v_index - vtx_len )
+    mesh.loops.add( v_index - vtx_len )
     mesh.polygons.add( len( start_loops ) )
 
     for i in range( len( vertices ) ) :
@@ -100,6 +103,15 @@ def append_faces(src_mesh, mesh, mtrl_offset) :
         mesh.polygons[poly_len + i].loop_total = total_loops[i]
     for i in range( len( materials ) ) :
         mesh.polygons[poly_len + i].material_index = materials[i]
+
+    mesh.update( calc_edges = True )
+
+def remove_doubles(mesh) :
+    bm = bmesh.new()
+    bm.from_mesh( mesh )
+    bmesh.ops.remove_doubles( bm, verts=bm.verts, dist=0.00001 )
+    bm.to_mesh( mesh )
+    bm.free()
 
 def render(filepath, size, scene, mesh) :
     scene.render.use_raytrace = False
@@ -146,8 +158,9 @@ def export(**param) :
         append_faces( obj.data, mesh, mtrl_offset )
         mtrl_offset += len( obj.data.materials )
 
-    mesh.update( calc_edges = True )
     wire_mtrl, wire_mtrl_obj = make_wire_material( scene, mesh )
+
+    remove_doubles( mesh )
 
     render( filepath, param["size"], scene, mesh )
 
