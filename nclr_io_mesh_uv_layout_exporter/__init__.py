@@ -31,8 +31,8 @@ class nclr_export_uv_layout(bpy.types.Operator) :
         subtype = 'FILE_PATH'
     )
 
-    check_exisiting = bpy.props.BoolProperty(
-        name = "Check Exisiting",
+    check_existing = bpy.props.BoolProperty(
+        name = "Check Existing",
         default = True,
         options = { 'HIDDEN' }
     )
@@ -60,7 +60,7 @@ class nclr_export_uv_layout(bpy.types.Operator) :
         )
 
     def check(self, context) :
-        filepath = bpy.path.ensure_ext( self.filepath, ".png" )
+        filepath = bpy.path.ensure_ext( self.filepath, '.png' )
         if filepath != self.filepath :
             self.filepath = filepath
             return True
