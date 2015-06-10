@@ -141,12 +141,6 @@ def render(filepath, size, scene, mesh) :
     bpy.ops.render.render( data_context, write_still = True )
 
 def export(**param) :
-    old_sysout = None
-
-    if platform.system() == "Windows" :
-        old_sysout = sys.stdout
-        sys.stdout = io.TextIOWrapper( sys.stdout.buffer, encoding = "cp932" )
-
     objs = bpy.context.selected_objects
 
     editing_obj = None
@@ -200,8 +194,5 @@ def export(**param) :
 
     if editing_obj != None :
         bpy.ops.object.mode_set( mode="EDIT", toggle=False )
-
-    if old_sysout != None :
-        sys.stdout = old_sysout
 
     return { 'FINISHED' }
