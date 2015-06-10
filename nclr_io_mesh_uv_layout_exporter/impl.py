@@ -167,9 +167,10 @@ def export(**param) :
 
     for obj in objs :
         try :
-            solid_mtrls.append( make_materials( scene, obj.data, mesh, param["opacity"] ) )
-            append_faces( obj.data, mesh, mtrl_offset )
-            mtrl_offset += len( obj.data.materials )
+            if obj and obj.type == 'MESH' and obj.data.uv_textures :
+                solid_mtrls.append( make_materials( scene, obj.data, mesh, param["opacity"] ) )
+                append_faces( obj.data, mesh, mtrl_offset )
+                mtrl_offset += len( obj.data.materials )
         except RuntimeError as e :
             print( e )
 
